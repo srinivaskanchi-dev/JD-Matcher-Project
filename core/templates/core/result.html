@@ -3,14 +3,57 @@
 <div class="min-h-screen bg-black text-white font-inter flex items-center justify-center">
   <div class="w-full max-w-2xl bg-gray-800 p-8 rounded-2xl shadow-2xl">
     <h2 class="text-3xl font-bold mb-6">Resume Match Results</h2>
-    <div class="mb-8">
-      <span class="text-lg font-semibold">Match Score:</span>
-      <span class="text-2xl font-bold text-yellow-400">{{ match_score }}%</span>
+
+    <div class="mb-4">
+      <span class="text-lg font-semibold">Original Resume Match Score:</span>
+      <span class="text-2xl font-bold text-yellow-400">{{ original_match_score }}%</span>
     </div>
     <div class="mb-8">
+      <span class="text-lg font-semibold">ATS-Optimized Resume Match Score:</span>
+      <span class="text-2xl font-bold {% if optimized_match_score > original_match_score %}text-green-400{% else %}text-yellow-400{% endif %}">{{ optimized_match_score }}%</span>
+      {% if optimized_match_score > original_match_score %}
+        <span class="text-sm text-green-300 ml-2">(Improved!)</span>
+      {% elif optimized_match_score < original_match_score %}
+        <span class="text-sm text-red-300 ml-2">(Slightly lower, review optimization)</span>
+      {% endif %} <br>
+      <span>
+        <p class="text-xs text-red-600 italic text-left mt-4">
+        Note: Please note that Fusion AI may occasionally produce inaccurate or incomplete results. We recommend reviewing all outputs before final use.
+      </p>
+      </span>
+    </div>
+
+    <div class="mb-8">
       <h3 class="text-2xl font-semibold mb-2">ATS-Optimized Resume</h3>
-      <pre class="bg-gray-700 p-4 rounded whitespace-pre-wrap font-mono text-sm">{{ ats_resume }}</pre>
-      <a href="{% url 'download_ats_resume' user_input.id %}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition mt-4">Download Resume</a>
+      <pre class="bg-gray-700 p-4 rounded whitespace-pre-wrap font-mono text-sm overflow-x-auto">{{ ats_resume }}</pre>
+      <a href="{% url 'download_ats_resume' user_input.id %}"
+        class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition mt-4 w-full text-center sm:w-auto"
+        download
+        target="_blank">
+        Download Resume
+      </a>
+
+    </div>
+    <div class="mb-8">
+      <h3 class="text-2xl font-semibold mb-2">Keywords in Job Description</h3>
+      <ul class="list-disc pl-6 space-y-1 text-gray-300">
+        {% for kw in jd_keywords %}
+          <li>{{ kw }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    {# Removed "Keywords in Resume" section as requested #}
+
+    <div class="mb-8">
+      <h3 class="text-2xl font-semibold mb-2">Matched Keywords</h3>
+      <ul class="list-disc pl-6 space-y-1 text-green-400 font-semibold">
+        {% for kw in matched_keywords %}
+          <li>{{ kw }}</li>
+        {% empty %}
+          <li class="text-red-400">No keywords matched. This could mean the resume needs more tailoring or the keywords are phrased differently.</li>
+        {% endfor %}
+      </ul>
     </div>
     <div class="mb-8">
       <h3 class="text-2xl font-semibold mb-2">Possible Interview Questions</h3>
@@ -25,8 +68,9 @@
       <p class="bg-gray-700 p-4 rounded text-white">{{ explanation }}</p>
     </div>
     <div class="mt-8 text-center">
-      <a href="/" class="text-blue-400 hover:underline">← Back to Upload</a>
+      <a href="{% url 'upload_resume' %}" class="text-blue-400 hover:underline">← Back to Upload</a>
     </div>
   </div>
 </div>
+
 {% endblock %}

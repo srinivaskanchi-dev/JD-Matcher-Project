@@ -1,28 +1,556 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JD Matcher</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 min-h-screen">
-    <nav class="bg-blue-700 text-white py-4 mb-8">
-        <div class="container mx-auto flex justify-between items-center px-4">
-            <a href="/" class="text-xl font-bold">JD Matcher</a>
-            <div>
-                {% if user.is_authenticated %}
-                    <span class="mr-4">Hello, {{ user.username }}!</span>
-                    <a href="{% url 'logout' %}" class="underline">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="underline mr-4">Login</a>
-                    <a href="{% url 'register' %}" class="underline">Register</a>
-                {% endif %}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fusion AI</title>
+
+    <!-- Tailwind CSS (latest via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <!-- Tailwind Config for Fonts -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              inter: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("DEBUG: Running the latest script from base.html!");
+        
+        // --- Side Menu Elements ---
+        const hamburgerBtn = document.getElementById("side-menu-toggle");
+        const sideMenu = document.getElementById("side-menu");
+        const sideMenuBackdrop = document.getElementById("side-menu-backdrop");
+        const sideMenuClose = document.getElementById("side-menu-close");
+
+        console.log("Side menu elements found:", {
+          hamburger: !!hamburgerBtn,
+          menu: !!sideMenu,
+          backdrop: !!sideMenuBackdrop,
+          close: !!sideMenuClose
+        });
+
+        function openSideMenu() {
+          console.log("Opening side menu");
+          if (sideMenu) sideMenu.classList.remove("translate-x-full");
+          if (sideMenuBackdrop) sideMenuBackdrop.classList.remove("hidden");
+        }
+
+        function closeSideMenu() {
+          console.log("Closing side menu");
+          if (sideMenu) sideMenu.classList.add("translate-x-full");
+          if (sideMenuBackdrop) sideMenuBackdrop.classList.add("hidden");
+        }
+
+        // --- ISOLATED Hamburger Button ---
+        if (hamburgerBtn) {
+          const newHamburger = hamburgerBtn.cloneNode(true);
+          hamburgerBtn.parentNode.replaceChild(newHamburger, hamburgerBtn);
+          
+          // Add ONLY our event listener
+          newHamburger.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+          
+            const isOpen = !sideMenu.classList.contains("translate-x-full");
+            if (isOpen) {
+              closeSideMenu();
+            } else {
+              openSideMenu();
+            }
+          });
+        }
+
+        if (sideMenuBackdrop) {
+          sideMenuBackdrop.addEventListener("click", function(e) {
+            console.log("Backdrop clicked - closing side menu");
+            closeSideMenu();
+          });
+        }
+
+        if (sideMenuClose) {
+          sideMenuClose.addEventListener("click", function(e) {
+            console.log("Close button clicked - closing side menu");
+            e.preventDefault();
+            closeSideMenu();
+          });
+        }
+
+        const sideMenuLinks = document.querySelectorAll("#side-menu a");
+        console.log("Side menu links found:", sideMenuLinks.length);
+        sideMenuLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            console.log("Side menu link clicked:", link.textContent);
+            closeSideMenu();
+          });
+        });
+
+        // --- ISOLATE Navbar Links ---
+        const navbarLinks = document.querySelectorAll('nav a:not(#side-menu-toggle)');
+        console.log("Navbar links found:", navbarLinks.length);
+        navbarLinks.forEach((link) => {
+          const newLink = link.cloneNode(true);
+          link.parentNode.replaceChild(newLink, link);
+          
+          newLink.addEventListener("click", (e) => {
+            console.log("=== NAVBAR LINK CLICKED ===", newLink.textContent);
+            closeSideMenu();
+            return true;
+          });
+        });
+
+        // --- User Dropdown Menu ---
+        const userMenuButton = document.getElementById("user-menu-button");
+        const dropdownMenu = document.getElementById("dropdown-menu");
+
+        if (userMenuButton && dropdownMenu) {
+          userMenuButton.addEventListener("click", () => {
+            dropdownMenu.classList.toggle("hidden");
+          });
+
+          document.addEventListener("click", (e) => {
+            if (
+              !userMenuButton.contains(e.target) &&
+              !dropdownMenu.contains(e.target)
+            ) {
+              dropdownMenu.classList.add("hidden");
+            }
+          });
+        }
+
+        // --- Toast Message Handler ---
+        const toasts = document.querySelectorAll("[data-toast]");
+        toasts.forEach((toast) => {
+          setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(-20px)";
+            setTimeout(() => toast.remove(), 500);
+          }, 3000);
+        });
+
+        // --- Chat Panel Logic ---
+        const chatToggle = document.getElementById("chat-toggle");
+        if (chatToggle) {
+          const chatPanel = document.getElementById("chat-panel");
+          const chatClose = document.getElementById("chat-close");
+          const chatForm = document.getElementById("chat-form");
+          const chatInput = document.getElementById("chat-input");
+          const chatMessages = document.getElementById("chat-messages");
+          const sendBtn = document.getElementById("send-btn");
+          const stopBtn = document.getElementById("stop-btn");
+
+          if (chatPanel && chatClose && chatForm && chatInput && chatMessages && sendBtn && stopBtn) {
+            chatToggle.addEventListener("click", async () => {
+              chatPanel.classList.remove("translate-x-full");
+              requestAnimationFrame(() => {
+                if (!chatMessages.dataset.greeted) {
+                  const welcomeMessage =
+                    "AI: Hi there! I'm Fusion AI - your smart career assistant, here to guide you through resumes, interviews, and beyond.";
+
+                  const aiBubble = document.createElement("div");
+                  aiBubble.className =
+                    "bg-gray-100 text-gray-800 p-2 border rounded-2xl self-start whitespace-pre-wrap font-not-italic";
+                  chatMessages.appendChild(aiBubble);
+                  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                  let i = 0;
+                  function typeWelcome() {
+                    if (i <= welcomeMessage.length) {
+                      aiBubble.textContent = welcomeMessage.substring(0, i);
+                      i++;
+                      chatMessages.scrollTop = chatMessages.scrollHeight;
+                      setTimeout(typeWelcome, 12);
+                    }
+                  }
+                  setTimeout(() => {
+                    typeWelcome();
+                    chatMessages.dataset.greeted = "true";
+                  }, 100);
+                }
+              });
+            });
+
+            chatClose.addEventListener("click", () => {
+              chatPanel.classList.add("translate-x-full");
+            });
+
+            chatForm.addEventListener("submit", async (e) => {
+              e.preventDefault();
+              const userMessage = chatInput.value.trim();
+              if (!userMessage) return;
+
+              const resumeDataEl = document.getElementById("resume-data");
+              const jdDataEl = document.getElementById("jd-data");
+
+              let resume = "";
+              let jd = "";
+
+              if (resumeDataEl && jdDataEl) {
+                resume = JSON.parse(resumeDataEl.textContent);
+                jd = JSON.parse(jdDataEl.textContent);
+              }
+
+              let fullMessage = "";
+              if (resume && jd) {
+                fullMessage = `You are Fusion AI, a helpful career assistant.
+
+                Here is the user's resume:\n${resume}
+                Here is the job description:\n${jd}
+
+                User: ${userMessage}`;
+              } else {
+                fullMessage = `You are Fusion AI — a friendly, conversational AI assistant that helps users with resumes and interviews.
+
+                The user has **not uploaded any resume or job description yet**.
+
+                Your instructions:
+                - If the user's message is a casual message (like "Hi", "Hello", "How are you", "What's up", "Thanks", "Who are you", etc.), respond **politely and casually**. DO NOT mention resume or job description uploads. You can respond warmly, like a human.
+                - If the user asks for resume analysis or interview preparation, THEN you should ask them to upload both their resume and job description.
+                - If you're unsure, be polite, casually, sarcastically and friendly. Just ask how you can help.
+
+                User: ${userMessage}`;
+              }
+
+              const userBubble = document.createElement("div");
+              userBubble.className = "bg-emerald-100 text-emerald-900 p-2 rounded-2xl self-end";
+              userBubble.innerText = "You: " + userMessage;
+              chatMessages.appendChild(userBubble);
+              chatInput.value = "";
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+
+              const response = await fetch("{% url 'chat_api' %}", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: JSON.stringify({
+                  prompt: fullMessage,
+                  message: userMessage,
+                }),
+              });
+
+              const data = await response.json();
+              const aiBubble = document.createElement("div");
+              aiBubble.className = "bg-gray-100 text-gray-800 p-2 rounded-2xl self-start whitespace-pre-wrap font-not-italic";
+              aiBubble.innerText = "AI: ";
+              chatMessages.appendChild(aiBubble);
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+
+              const fullResponse = data.response || "Sorry, something went wrong.";
+              let index = 0;
+              let typingTimeout;
+              let isTyping = true;
+
+              sendBtn.classList.add("hidden");
+              stopBtn.classList.remove("hidden");
+              chatInput.disabled = true;
+              const typingIndicator = document.getElementById("typing-indicator");
+              if (typingIndicator) typingIndicator.classList.remove("hidden");
+
+              function typeCharacter() {
+                if (!isTyping) return;
+                if (index < fullResponse.length) {
+                  aiBubble.innerText += fullResponse.charAt(index);
+                  index++;
+                  chatMessages.scrollTop = chatMessages.scrollHeight;
+                  typingTimeout = setTimeout(typeCharacter, 12);
+                } else {
+                  sendBtn.classList.remove("hidden");
+                  stopBtn.classList.add("hidden");
+                  chatInput.disabled = false;
+                  if (typingIndicator) typingIndicator.classList.add("hidden");
+                  isTyping = false;
+                }
+              }
+              typeCharacter();
+
+              stopBtn.addEventListener("click", () => {
+                isTyping = false;
+                clearTimeout(typingTimeout);
+                sendBtn.classList.remove("hidden");
+                stopBtn.classList.add("hidden");
+                chatInput.disabled = false;
+                if (typingIndicator) typingIndicator.classList.add("hidden");
+              });
+
+              chatMessages.dataset.greeted = "true";
+            });
+          }
+        }
+      });
+    </script>
+
+    <!-- Inter Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      @keyframes fade-in-down {
+        from {
+          opacity: 0;
+          transform: translateY(-1rem);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in-down {
+        animation: fade-in-down 0.4s ease-out;
+      }
+    </style>
+  </head>
+  <!-- Markdown parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Sanitizer -->
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
+
+  <body
+    class="bg-slate-100 text-slate-800 font-inter min-h-screen flex flex-col"
+  >
+    <!-- Navbar -->
+    <nav class="bg-slate-900 text-white shadow-md">
+      <div
+        class="w-full max-w-7xl mx-auto px-4 py-4 flex justify-between items-center"
+      >
+        <a
+          href="/"
+          class="text-xl md:text-2xl font-bold text-emerald-700 tracking-tight hover:text-emerald-600 transition"
+        >
+          Fusion <span class="text-gray-200">AI</span>
+        </a>
+
+        <div class="flex items-center space-x-4 text-sm text-white">
+          <a href="{% url 'home' %}" class="hover:text-emerald-600 transition"
+            ><strong>Home</strong></a
+          >
+          {% if request.user.is_authenticated %}
+          <div class="relative inline-block text-left hidden md:block">
+            <button
+              id="user-menu-button"
+              class="flex items-center gap-2 text-white hover:text-emerald-400 focus:outline-none"
+            >
+              <i class="fa-solid fa-user"></i>
+              {% if request.user.is_superuser %}
+              {{ request.user.username|cut:"@gmail.com"}}
+              {% endif %}
+              <i class="fa-solid fa-chevron-down text-xs"></i>
+            </button>
+            <div
+              id="dropdown-menu"
+              class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg hidden z-50"
+            >
+              {% if request.user.is_superuser %}
+              <a
+                href="/admin/"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >Admin Dashboard</a
+              >
+              {% endif %}
+
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </form>
             </div>
+          </div>
+          {% else %}
+
+          <span class="flex space-x-4 pointer-events-none">
+            <a
+              href="{% url 'login' %}"
+              id="login-link"
+              class="hover:underline text-white/90 pointer-events-auto"
+              >Login</a
+            >
+            <a
+              href="{% url 'register' %}"
+              id="register-link"
+              class="hover:underline text-white/90 pointer-events-auto"
+              >Register</a
+            >
+          </span>
+          {% endif %}
+          <div class="ml-2">
+            <button
+              id="side-menu-toggle"
+              class="z-50 text-white text-2xl hover:text-emerald-400 focus:outline-none"
+            >
+              ☰
+            </button>
+          </div>
         </div>
+      </div>
     </nav>
-    <main>
+    {% if messages %}
+    <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-4">
+      {% for message in messages %}
+      <div
+        class="toast-message px-5 py-3 rounded-lg shadow-lg text-white bg-gray-800 transition-opacity duration-500"
+        data-toast
+      >
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+      <div class="container mx-auto px-0 sm:px-0 lg:px-0">
         {% block content %}{% endblock %}
+      </div>
     </main>
-</body>
-</html> 
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-sm py-4 text-center">
+      © {% now "Y" %} Fusion AI. All rights reserved.
+    </footer>
+    {% if user.is_authenticated %}
+    <!-- Chat Label -->
+    <div
+      class="fixed bottom-20 right-5 z-50 bg-emerald-700 text-white text-sm px-4 py-2 rounded-full shadow-lg"
+    >
+      Need help? Ask Fusion AI
+    </div>
+
+    <!-- Chat Icon -->
+    <button
+      id="chat-toggle"
+      class="fixed bottom-5 right-5 z-50 bg-emerald-700 hover:bg-emerald-800 text-white p-3 rounded-full shadow-lg"
+    >
+      🤖
+    </button>
+
+    <!-- Chat Panel -->
+    <div
+      id="chat-panel"
+      class="fixed bottom-0 right-0 w-full md:w-[400px] h-[70%] bg-white border-l border-t border-gray-300 shadow-lg transform translate-x-full transition-transform duration-300 z-50 flex flex-col border rounded-3xl px-2 py-1"
+    >
+      <div
+        class="flex justify-between items-center p-4 bg-emerald-700 text-white border rounded-3xl"
+      >
+        <h3 class="text-lg font-semibold">Fusion AI Interview Bot</h3>
+        <button id="chat-close" class="text-white text-2xl hover:text-gray-300">
+          &times;
+        </button>
+      </div>
+      <div
+        id="chat-messages"
+        class="flex-1 border rounded-xl overflow-y-auto p-4 space-y-2 text-sm"
+      ></div>
+      <div id="typing-indicator" class="px-4 pb-2 text-xs text-gray-500 hidden">
+        Typing...
+      </div>
+      <form id="chat-form" class="p-4 border-t flex gap-2 relative">
+        <input
+          type="text"
+          id="chat-input"
+          placeholder="Type your answer..."
+          class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring focus:border-emerald-500"
+        />
+        <button
+          id="send-btn"
+          type="submit"
+          class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1 rounded-full flex items-center gap-2"
+        >
+          <span class="text-white text-lg">➤</span>
+        </button>
+        <button
+          id="stop-btn"
+          type="button"
+          class="hidden bg-gray-400 hover:bg-gray-300 text-black px-3 py-1 rounded-full flex items-center gap-2"
+        >
+          <span class="text-xl">⏸</span>
+        </button>
+      </form>
+      <div id="caution" class="px-4 pb-2 text-xs text-center text-gray-500">
+        Fusion AI can make mistakes, so double-check it
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Side Menu Panel -->
+
+    <div
+      id="side-menu"
+      class="fixed top-4 right-0 translate-x-full bg-white rounded-2xl shadow-lg transform translate-x-full transition-transform duration-300 z-50 w-60"
+    >
+      <div
+        class="flex justify-between items-center p-4 border-b bg-emerald-700 text-white"
+      >
+        <span class="text-lg font-semibold">Menu</span>
+        <button id="side-menu-close" class="text-white text-xl font-bold">
+          &times;
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3 text-slate-800">
+        {% if request.user.is_superuser %}
+        <a href="/admin/" class="block hover:underline">Admin Dashboard</a>
+        {% endif %}
+        <a href="{% url 'home' %}" class="block hover:underline">Home</a>
+        <a href="{% url 'upload_resume' %}" class="block hover:underline"
+          >Upload Resume</a
+        >
+        <a href="{% url 'faq' %}" class="block hover:underline">Help / FAQ</a>
+        <a href="{% url 'about' %}" class="block hover:underline">About</a>
+        <a href="{% url 'privacy' %}" class="block hover:underline">Privacy</a>
+        <!-- Mobile-only logout button -->
+        {% if request.user.is_authenticated %}
+        <form
+          method="post"
+          action="{% url 'logout' %}"
+          class="block md:hidden mt-4"
+        >
+          {% csrf_token %}
+          <button
+            type="submit"
+            class="w-full text-left hover:underline text-red-600"
+          >
+            Logout
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Side Menu Backdrop -->
+    <div
+      id="side-menu-backdrop"
+      class="fixed inset-0 bg-black bg-opacity-40 hidden z-40 pointer-events-auto"
+    ></div>
+
+    <!-- Inside base.html, before closing </body> -->
+    {% block extra_scripts %}
+
+    {% endblock %}
+    {% block resume_data_scripts %}
+    
+    {% endblock %}
+  </body>
+</html>

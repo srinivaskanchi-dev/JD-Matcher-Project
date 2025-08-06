@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.faq-toggle').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const answer = btn.nextElementSibling;
+        const icon = btn.querySelector('svg');
+
+        answer.classList.toggle('hidden');
+        icon.classList.toggle('rotate-180');
+      });
+    });
+  });
+</script>
+<div class="max-w-4xl mx-auto my-12 p-8 bg-white rounded-3xl shadow">
+  <h1 class="text-3xl font-bold text-emerald-700 mb-6">Help / Frequently Asked Questions</h1>
+  
+  <div class="space-y-4 text-slate-700">
+  {% for faq in faqs %}
+  <div class="border rounded-3xl overflow-hidden">
+    <button class="w-full text-left px-4 py-3 bg-emerald-50 hover:bg-emerald-100 font-medium flex justify-between items-center faq-toggle">
+      <span>{{ faq.question }}</span>
+      <svg class="w-5 h-5 transform transition-transform duration-300 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+    <div class="faq-answer px-4 py-3 hidden bg-white">
+      {{ faq.answer|safe }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock %}

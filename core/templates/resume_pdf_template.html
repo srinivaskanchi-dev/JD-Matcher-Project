@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ATS Optimized Resume</title>
+    <style>
+        /* General Body Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.3;
+            color: #333;
+            margin: 25px 35px;
+            font-size: 10pt;
+        }
+
+        /* Main Heading (Resume Title) */
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            font-size: 17pt;
+            margin-bottom: 7px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #0056b3;
+        }
+
+        /* Section Headings */
+        h2 {
+            color: #0056b3;
+            font-size: 12.5pt;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 2px;
+            margin-top: 16px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        /* Horizontal Rule for visual separation between sections */
+        .section-divider {
+            border: none;
+            border-top: 1px dashed #eee;
+            margin: 10px 0;
+        }
+
+        /* Paragraphs within sections */
+        .section-content p {
+            margin-bottom: 3px;
+            text-align: justify;
+        }
+
+        /* Unordered Lists within sections (for bullet points) */
+        .section-content ul {
+            list-style-type: disc;
+            margin-left: 15px;
+            margin-bottom: 3px;
+            padding-left: 0;
+        }
+        .section-content li {
+            margin-bottom: 1px;
+        }
+
+        /* Contact Information Section */
+        .contact-info {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 9pt;
+            line-height: 1.2;
+        }
+        .contact-info p {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Specific Item Styles (e.g., Experience, Education, Project) */
+        .experience-item, .education-item, .project-item {
+            margin-bottom: 7px; /* Reduced margin */
+        }
+        .experience-item h3, .project-item h3 {
+            font-size: 11pt;
+            margin-bottom: 1px;
+            color: #222;
+        }
+        .experience-item p, .project-item p {
+            font-size: 9pt;
+            margin: 0;
+        }
+        .experience-item ul, .project-item ul {
+            margin-top: 2px;
+        }
+
+        /* Skills List (tags) */
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 3px;
+            line-height: 1.5;
+        }
+        .skills-list span {
+            background-color: #e0eaff;
+            color: #0056b3;
+            padding: 1px 5px;
+            border-radius: 2px;
+            margin-right: 3px;
+            margin-bottom: 3px; 
+            font-size: 8pt;
+            white-space: nowrap;
+        }
+
+        /* Page Break Hint */
+        .resume-section {
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+<body>
+    <h1>ATS Optimized Resume</h1>
+
+    {% for section_name, section_lines in parsed_ats_resume.items %}
+        <div class="resume-section">
+            <h2>{{ section_name }}</h2>
+            <div class="section-content">
+                {% if section_name == "Contact Information" %}
+                    <div class="contact-info">
+                        {% for line in section_lines %}
+                            {% if line.content %}
+                                <p>{{ line.content }}</p>
+                            {% else %}
+                                <p>{{ line }}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% elif section_name == "Summary" %}
+                    <div class="section-content">
+                        {% for item in section_lines %}
+                            {% if item.content %}
+                                <p>{{ item.content }}</p>
+                            {% else %}
+                                <p>{{ item }}</p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% elif section_name == "Skills" %}
+                    <div class="skills-list">
+                        {% for skill in section_lines %}
+                            {% if skill.strip %}
+                                <span>{{ skill.strip }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {% for item in section_lines %}
+                        {% if item.type == 'bullet' %}
+                            <ul><li>{{ item.content }}</li></ul>
+                        {% elif item.type == 'paragraph' %}
+                            <p>{{ item.content }}</p>
+                        {% else %}
+                            <p>{{ item }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        {% if not forloop.last %}
+            <hr class="section-divider">
+        {% endif %}
+    {% endfor %}
+
+</body>
+</html>

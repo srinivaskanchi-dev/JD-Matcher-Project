@@ -1,27 +1,107 @@
 {% extends 'base.html' %}
+{% load form_filters %}
 {% block content %}
-<div class="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-  <h2 class="text-2xl font-bold mb-4">Register</h2>
-  <form method="post" class="space-y-4">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <div>
-      {{ form.username.label_tag }}
-      {{ form.username }}
-      {{ form.username.errors }}
-    </div>
-    <div>
-      {{ form.password1.label_tag }}
-      {{ form.password1 }}
-      {{ form.password1.errors }}
-    </div>
-    <div>
-      {{ form.password2.label_tag }}
-      {{ form.password2 }}
-      {{ form.password2.errors }}
-    </div>
-    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Register</button>
-  </form>
-  <p class="mt-4 text-sm">Already have an account? <a href="{% url 'login' %}" class="text-blue-600 hover:underline">Login here</a>.</p>
+<div class="min-h-screen bg-black text-white font-inter flex items-center justify-center px-4">
+  <div class="w-full max-w-screen-sm mx-auto bg-gray-900 p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-800">
+
+    <!-- Heading -->
+    <h2 class="text-3xl font-semibold text-center text-emerald-400 mb-6">Create Your Account</h2>
+
+    <!-- Form -->
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div>
+        <label for="id_username" class="block mb-1 text-sm text-gray-300">Email ID</label>
+        {{ form.username|add_class:"w-full px-4 py-3 rounded-lg bg-gray-300 text-gray-800 border border-gray-400 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-gray-200 transition" }}
+        {{ form.username.errors }}
+      </div>
+
+      <div>
+        <label for="id_password1" class="block mb-1 text-sm text-gray-300">Password</label>
+        <div class="relative">
+          {{ form.password1|add_class:"w-full px-4 py-3 pr-12 rounded-lg bg-gray-300 text-gray-800 border border-gray-400 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-gray-200 transition" }}
+          <button type="button" onclick="togglePassword('id_password1', this)" class="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-800">
+            👁
+          </button>
+        </div>
+        {{ form.password1.errors }}
+      </div>
+
+      <!-- Confirm Password Field with Eye Icon -->
+      <div>
+        <label for="id_password2" class="block mb-1 text-sm text-gray-300">Confirm Password</label>
+        <div class="relative">
+          {{ form.password2|add_class:"w-full px-4 py-3 pr-12 rounded-lg bg-gray-300 text-gray-800 border border-gray-400 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-gray-200 transition" }}
+          <button type="button" onclick="togglePassword('id_password2', this)" class="absolute inset-y-0 right-3 flex items-center text-gray-600 hover:text-gray-800">
+            👁
+          </button>
+        </div>
+        {{ form.password2.errors }}
+      </div>
+
+      <!-- Live Password Validation -->
+      <ul id="password-conditions" class="text-sm mt-3 space-y-1 text-gray-400">
+        <li id="length" class="text-red-500">At least 8 characters</li>
+        <li id="match" class="text-red-500">Passwords match</li>
+      </ul>
+
+      <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 transition text-white font-semibold py-3 rounded-lg shadow-md">
+        Register
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-gray-400">
+      Already have an account?
+      <a href="{% url 'login' %}" class="text-emerald-400 hover:underline">Login here</a>.
+    </p>
+  </div>
 </div>
-{% endblock %} 
+
+<!-- Real-Time Password Checker -->
+<script>
+  const pwd1 = document.getElementById("id_password1");
+  const pwd2 = document.getElementById("id_password2");
+
+  const lengthCheck = document.getElementById("length");
+  const matchCheck = document.getElementById("match");
+
+  function validatePasswords() {
+    const val1 = pwd1.value;
+    const val2 = pwd2.value;
+
+    // Length check
+    if (val1.length >= 8) {
+      lengthCheck.classList.replace("text-red-500", "text-green-400");
+      lengthCheck.textContent = "At least 8 characters";
+    } else {
+      lengthCheck.classList.replace("text-green-400", "text-red-500");
+      lengthCheck.textContent = "At least 8 characters";
+    }
+
+    // Match check
+    if (val1 && val2 && val1 === val2) {
+      matchCheck.classList.replace("text-red-500", "text-green-400");
+      matchCheck.textContent = "Passwords match";
+    } else {
+      matchCheck.classList.replace("text-green-400", "text-red-500");
+      matchCheck.textContent = "Passwords match";
+    }
+  }
+
+  pwd1.addEventListener("input", validatePasswords);
+  pwd2.addEventListener("input", validatePasswords);
+
+  function togglePassword(fieldId, button) {
+    const input = document.getElementById(fieldId);
+    if (input.type === "password") {
+      input.type = "text";
+      button.textContent = "👁";
+    } else {
+      input.type = "password";
+      button.textContent = "👁";
+    }
+  }
+</script>
+{% endblock %}
