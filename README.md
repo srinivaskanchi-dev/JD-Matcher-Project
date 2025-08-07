@@ -10,9 +10,7 @@
 Fusion AI is an intelligent career assistance platform that revolutionizes the job application process. Built with Django and powered by Google's Gemini AI, it helps job seekers optimize their resumes, match them with job descriptions, and prepare for interviews with personalized AI guidance.
 
 ##📁 Project Structure
-bash
-Copy
-Edit
+---
 JD-Matcher-Project/
 │
 ├── .gitignore                  # Git ignore file (includes .env)
@@ -38,6 +36,7 @@ JD-Matcher-Project/
 │
 ├── media/                      # Uploaded resumes (served temporarily)
 └── .env                        # 🔐 Secret credentials (Not committed!)
+---
 
 ## ✨ Features
 
