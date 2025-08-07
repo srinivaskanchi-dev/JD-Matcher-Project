@@ -10,7 +10,7 @@
 Fusion AI is an intelligent career assistance platform that revolutionizes the job application process. Built with Django and powered by Google's Gemini AI, it helps job seekers optimize their resumes, match them with job descriptions, and prepare for interviews with personalized AI guidance.
 
 ##📁 Project Structure
----
+```
 JD-Matcher-Project/
 │
 ├── .gitignore                  # Git ignore file (includes .env)
@@ -36,68 +36,68 @@ JD-Matcher-Project/
 │
 ├── media/                      # Uploaded resumes (served temporarily)
 └── .env                        # 🔐 Secret credentials (Not committed!)
----
+```
 
-## ✨ Features
+### ✨ Features
 
-### 🤖 AI-Powered Resume Optimization
+## 🤖 AI-Powered Resume Optimization
 - **ATS-Friendly Resume Generation**: Automatically creates Applicant Tracking System (ATS) optimized resumes
 - **Keyword Matching**: Identifies and highlights relevant keywords from job descriptions
 - **Smart Content Enhancement**: Improves resume content with AI-driven suggestions
 - **PDF Export**: Download optimized resumes in professional PDF format
 
-### 📊 Intelligent Job Matching
+## 📊 Intelligent Job Matching
 - **Match Score Analysis**: Provides percentage-based compatibility scores
 - **Keyword Extraction**: Automatically extracts key skills and requirements from job descriptions
 - **Gap Analysis**: Identifies missing skills and suggests improvements
 - **Visual Feedback**: Clear indicators of match quality and areas for improvement
 
-### 🎯 Interview Preparation
+## 🎯 Interview Preparation
 - **Personalized Questions**: AI-generated interview questions based on your resume and job description
 - **Context-Aware Responses**: Questions tailored to your specific experience and role
 - **Practice Scenarios**: Realistic interview situations to prepare for
 - **Skill Assessment**: Questions that test both technical and soft skills
 
-### 💬 Interactive AI Chatbot
+## 💬 Interactive AI Chatbot
 - **Real-time Assistance**: Get instant help with career-related questions
 - **Context-Aware Responses**: Chatbot understands your resume and job context
 - **Interview Coaching**: Receive personalized interview tips and advice
 - **Resume Feedback**: Get suggestions for improving your resume
 
-### 🔐 User Management
+## 🔐 User Management
 - **Secure Authentication**: User registration and login system
 - **Profile Management**: Personal dashboard for managing resumes and applications
 - **History Tracking**: View past resume analyses and improvements
 - **Privacy Protection**: Secure handling of personal data
 
-## 🛠️ Technology Stack
+### 🛠️ Technology Stack
 
-### Backend
+## Backend
 - **Django 4.2+**: Robust web framework for rapid development
 - **Python 3.8+**: Modern Python for AI and web development
 - **Google Gemini AI**: Advanced AI model for content generation and analysis
 - **SQLite/MySQL**: Database management (configurable)
 - **Django ORM**: Object-relational mapping for database operations
 
-### Frontend
+## Frontend
 - **Tailwind CSS**: Utility-first CSS framework for modern design
 - **JavaScript (ES6+)**: Interactive user interface and AJAX functionality
 - **HTML5**: Semantic markup for accessibility
 - **Font Awesome**: Icon library for enhanced UI
 
-### AI & Analysis
+## AI & Analysis
 - **Google Gemini 2.0 Flash**: Advanced language model for content generation
 - **TF-IDF Vectorization**: Text similarity analysis for job matching
 - **SpaCy NLP**: Natural language processing for keyword extraction
 - **Cosine Similarity**: Algorithm for calculating match scores
 
-### Development Tools
+## Development Tools
 - **Git**: Version control system
 - **Virtual Environment**: Isolated Python environment
 - **Django Debug Toolbar**: Development debugging
 - **Pytest**: Testing framework
 
-## 📋 Prerequisites
+### 📋 Prerequisites
 
 Before running this project, ensure you have:
 
@@ -107,15 +107,15 @@ Before running this project, ensure you have:
 - **Google Gemini API Key** (for AI features)
 - **MySQL** (optional, for production)
 
-## 🚀 Installation
+### 🚀 Installation
 
-### 1. Clone the Repository
+## 1. Clone the Repository
 ```bash
 git clone https://github.com/yourusername/fusion-ai.git
 cd fusion-ai
 ```
 
-### 2. Create Virtual Environment
+## 2. Create Virtual Environment
 ```bash
 python -m venv venv
 
@@ -126,12 +126,12 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-### 3. Install Dependencies
+## 3. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Environment Setup
+## 4. Environment Setup
 Create a `.env` file in the project root:
 ```env
 # Django Settings
@@ -149,7 +149,7 @@ MYSQL_PORT=3306
 GOOGLE_API_KEY=your-gemini-api-key-here
 ```
 
-### 5. Database Setup
+## 5. Database Setup
 ```bash
 # Run migrations
 python manage.py makemigrations
@@ -159,16 +159,16 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 6. Run the Development Server
+## 6. Run the Development Server
 ```bash
 python manage.py runserver
 ```
 
 Visit `http://127.0.0.1:8000` to access the application.
 
-## 📖 Usage Guide
+### 📖 Usage Guide
 
-### Getting Started
+## Getting Started
 
 1. **Register/Login**: Create an account or log in to access all features
 2. **Upload Resume**: Either upload a PDF file or paste your resume text
@@ -178,30 +178,30 @@ Visit `http://127.0.0.1:8000` to access the application.
 
 ### Key Features Walkthrough
 
-#### Resume Upload
+## Resume Upload
 - **Supported Formats**: PDF files and plain text
 - **File Size Limit**: Up to 10MB for PDF uploads
 - **Text Processing**: Automatic extraction and cleaning of resume content
 
-#### Job Description Analysis
+## Job Description Analysis
 - **Keyword Extraction**: AI identifies key skills and requirements
 - **Match Scoring**: Calculates compatibility percentage
 - **Gap Analysis**: Highlights missing skills and experiences
 
-#### AI Chatbot
+## AI Chatbot
 - **Context-Aware**: Understands your resume and job description
 - **Real-time Responses**: Instant help with career questions
 - **Interview Coaching**: Personalized interview preparation tips
 
-#### Resume Optimization
+## Resume Optimization
 - **ATS Compliance**: Ensures resume passes through applicant tracking systems
 - **Keyword Integration**: Naturally incorporates job-specific keywords
 - **Professional Formatting**: Clean, professional layout
 - **PDF Export**: Download ready-to-use resume
 
-## 🔧 Configuration
+### 🔧 Configuration
 
-### Django Settings
+## Django Settings
 The main settings are in `jdmatcher/settings.py`:
 
 ```python
@@ -229,7 +229,7 @@ Key environment variables to configure:
 - `GOOGLE_API_KEY`: Your Google Gemini AI API key
 - Database credentials for MySQL
 
-## 🗄️ Database Schema
+### 🗄️ Database Schema
 
 ### Core Models
 
@@ -252,7 +252,7 @@ Key environment variables to configure:
 - `bot_response`: AI's response
 - `created_at`: Timestamp of conversation
 
-## 🔒 Security Features
+### 🔒 Security Features
 
 - **CSRF Protection**: Built-in Django CSRF protection
 - **User Authentication**: Secure login/logout system
@@ -261,7 +261,7 @@ Key environment variables to configure:
 - **SQL Injection Protection**: Django ORM protection
 - **XSS Protection**: Template auto-escaping
 
-## 🧪 Testing
+### 🧪 Testing
 
 Run tests to ensure everything works correctly:
 
@@ -312,7 +312,7 @@ coverage report
 - **Cache**: Redis
 - **File Storage**: AWS S3 (for media files)
 
-## 🤝 Contributing
+### 🤝 Contributing
 
 We welcome contributions! Please follow these steps:
 
@@ -329,11 +329,7 @@ We welcome contributions! Please follow these steps:
 - Update documentation for new features
 - Ensure all tests pass before submitting
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
+### Acknowledgments
 
 - **Google Gemini AI**: For providing the AI capabilities
 - **Django Community**: For the excellent web framework
@@ -348,7 +344,7 @@ For support and questions:
 - **GitHub Issues**: [Create an issue](https://github.com/yourusername/fusion-ai/issues)
 - **Documentation**: Check the project wiki
 
-## 🔄 Version History
+### 🔄 Version History
 
 ### v1.0.0 (Current)
 - Initial release
@@ -358,25 +354,6 @@ For support and questions:
 - User authentication system
 - PDF export functionality
 
-## 🎯 Roadmap
-
-### Upcoming Features
-- [ ] Multi-language support
-- [ ] Resume template library
-- [ ] Advanced analytics dashboard
-- [ ] Email integration
-- [ ] Mobile app development
-- [ ] API for third-party integrations
-
-### Planned Improvements
-- [ ] Enhanced AI models
-- [ ] Better performance optimization
-- [ ] Advanced security features
-- [ ] Comprehensive testing suite
-- [ ] Documentation improvements
-
 ---
 
 **Built with ❤️ by [Srinivas Kanchi](https://github.com/srinivaskanchi-dev)**
-
-For more information, visit our [website](https://fusion-ai.com) or check out the [documentation](https://docs.fusion-ai.com). 
