@@ -38,7 +38,7 @@ JD-Matcher-Project/
 └── .env                        # 🔐 Secret credentials
 ```
 
-## ✨ Features
+### ✨ Features
 
 ## 🤖 AI-Powered Resume Optimization
 - **ATS-Friendly Resume Generation**: Automatically creates Applicant Tracking System (ATS) optimized resumes
