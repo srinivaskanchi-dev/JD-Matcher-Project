@@ -38,7 +38,7 @@ JD-Matcher-Project/
 └── .env                        # 🔐 Secret credentials (Not committed!)
 ```
 
-### ✨ Features
+## ✨ Features
 
 ## 🤖 AI-Powered Resume Optimization
 - **ATS-Friendly Resume Generation**: Automatically creates Applicant Tracking System (ATS) optimized resumes
@@ -111,8 +111,8 @@ Before running this project, ensure you have:
 
 ## 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/fusion-ai.git
-cd fusion-ai
+git clone https://github.com/srinivaskanchi-dev/JD-Matcher-Project.git
+cd JD-Matcher-Project
 ```
 
 ## 2. Create Virtual Environment
