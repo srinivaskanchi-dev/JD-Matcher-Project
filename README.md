@@ -34,7 +34,7 @@ JD-Matcher-Project/
 │   └── base.html               # Base layout with navbar & chat panel
 │
 ├── media/                      # Uploaded resumes (served temporarily)
-└── .env                        # 🔐 Secret credentials
+└── .env                        # Secret credentials
 ```
 
 ### ✨ Features
