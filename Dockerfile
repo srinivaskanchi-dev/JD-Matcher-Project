@@ -1,9 +1,14 @@
 # Use an official Python image
-FROM python:3.12-slim
+FROM python:3.11-slim
 
-# Install system dependencies for mysqlclient
+# Install system dependencies for mysqlclient and scientific libs
 RUN apt-get update && apt-get install -y \
     default-libmysqlclient-dev build-essential pkg-config \
+    gcc g++ \
+    libpq-dev \
+    libffi-dev \
+    libblas-dev liblapack-dev \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set work directory
