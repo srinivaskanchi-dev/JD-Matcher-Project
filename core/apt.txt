@@ -1,6 +1,0 @@
-libmagic-dev
-poppler-utils
-default-libmysqlclient-dev
-tesseract-ocr
-wkhtmltopdf
-libpq-dev
