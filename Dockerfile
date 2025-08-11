@@ -19,7 +19,7 @@ COPY requirements.txt /app/
 
 # Install Python dependencies in a virtual environment
 RUN python -m venv /opt/venv && . /opt/venv/bin/activate \
-    && pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --upgrade pip==24.0 \
     && pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of your project
